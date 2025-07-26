@@ -32,47 +32,48 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
     function setupAccordion() {
-        const accordions = document.querySelectorAll('.accordion-button');
+    const accordions = document.querySelectorAll('.accordion-button');
 
-        accordions.forEach(clickedAccordion => {
-            clickedAccordion.addEventListener('click', function () {
-                const panel = this.nextElementSibling;
-                const icon = this.querySelector('.icon');
-                const isAlreadyActive = this.classList.contains('active');
+    accordions.forEach(clickedAccordion => {
+        clickedAccordion.addEventListener('click', function () {
+            const panel = this.nextElementSibling;
+            const icon = this.querySelector('.icon');
+            const isAlreadyActive = this.classList.contains('active');
 
-                // Fecha todas as outras
-                accordions.forEach(otherAccordion => {
-                    if (otherAccordion !== this) {
-                        otherAccordion.classList.remove('active');
-                        otherAccordion.nextElementSibling.style.maxHeight = null;
-                        otherAccordion.nextElementSibling.classList.remove('open');
-                        otherAccordion.querySelector('.icon').style.transform = 'rotate(0deg)';
-                    }
-                });
-
-                if (isAlreadyActive) {
-                    this.classList.remove('active');
-                    panel.style.maxHeight = null;
-                    panel.classList.remove('open');
-                    icon.style.transform = 'rotate(0deg)';
-                } else {
-                    this.classList.add('active');
-                    panel.style.maxHeight = panel.scrollHeight + "px";
-                    panel.classList.add('open');
-                    icon.style.transform = 'rotate(45deg)';
-
-                    // Aguarda o painel expandir antes de rolar
-                    setTimeout(() => {
-                        const yOffset = 0; // espaço do topo
-                        const y = this.getBoundingClientRect().top + window.scrollY + yOffset;
-
-                        window.scrollTo({
-                            top: y,
-                            behavior: 'smooth'
-                        });
-                    }, 350); // tempo suficiente para expandir
+            // Fecha todos os outros
+            accordions.forEach(otherAccordion => {
+                if (otherAccordion !== this) {
+                    otherAccordion.classList.remove('active');
+                    otherAccordion.nextElementSibling.style.display = 'none';
+                    otherAccordion.nextElementSibling.classList.remove('open');
+                    otherAccordion.querySelector('.icon').style.transform = 'rotate(0deg)';
                 }
             });
+
+            if (isAlreadyActive) {
+                this.classList.remove('active');
+                panel.style.display = 'none';
+                panel.classList.remove('open');
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                this.classList.add('active');
+                panel.style.display = 'block';
+                panel.classList.add('open');
+                icon.style.transform = 'rotate(45deg)';
+
+                // Rola para o botão após garantir que o conteúdo foi exibido
+                setTimeout(() => {
+                    const yOffset = -10;
+                    const y = this.getBoundingClientRect().top + window.scrollY + yOffset;
+
+                    window.scrollTo({
+                        top: y,
+                        behavior: 'smooth'
+                    });
+                }, 100);
+            }
         });
-    }
+    });
+}
+
 });
