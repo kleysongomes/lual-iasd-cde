@@ -1,46 +1,66 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const accordions = document.querySelectorAll('.accordion-button');
+    const catalogo = document.querySelector('.catalogo');
 
-    // Adiciona o ícone de '+' dinamicamente a cada botão
-    accordions.forEach(accordion => {
-        if (!accordion.querySelector('.icon')) { // Evita adicionar ícones duplicados
-            const icon = document.createElement('span');
-            icon.className = 'icon';
-            icon.textContent = '+';
-            accordion.appendChild(icon);
-        }
-    });
+    // Carrega músicas do JSON
+    fetch('musicas.json')
+        .then(response => response.json())
+        .then(musicas => {
+            musicas.forEach((musicaObj) => {
+                const button = document.createElement('button');
+                button.className = 'accordion-button';
+                button.textContent = musicaObj.musica;
 
-    accordions.forEach(clickedAccordion => {
-        clickedAccordion.addEventListener('click', function() { // Usar 'function' para ter acesso ao 'this'
-            const panel = this.nextElementSibling;
-            const icon = this.querySelector('.icon');
-            const isAlreadyActive = this.classList.contains('active');
+                const icon = document.createElement('span');
+                icon.className = 'icon';
+                icon.textContent = '+';
+                button.appendChild(icon);
 
-            // 1. Fecha todos os painéis que não são o clicado
-            accordions.forEach(otherAccordion => {
-                if (otherAccordion !== this) {
-                    otherAccordion.classList.remove('active');
-                    otherAccordion.nextElementSibling.style.maxHeight = null;
-                    otherAccordion.nextElementSibling.classList.remove('open');
-                    otherAccordion.querySelector('.icon').style.transform = 'rotate(0deg)';
-                }
+                const panel = document.createElement('div');
+                panel.className = 'panel';
+
+                const pre = document.createElement('pre');
+                pre.className = 'letra';
+                pre.textContent = musicaObj.letra;
+                panel.appendChild(pre);
+
+                catalogo.appendChild(button);
+                catalogo.appendChild(panel);
             });
 
-            // 2. Abre ou fecha o painel que foi clicado
-            if (isAlreadyActive) {
-                // Se já estava ativo, fecha
-                this.classList.remove('active');
-                panel.style.maxHeight = null;
-                panel.classList.remove('open');
-                icon.style.transform = 'rotate(0deg)';
-            } else {
-                // Se estava fechado, abre
-                this.classList.add('active');
-                panel.style.maxHeight = panel.scrollHeight + "px";
-                panel.classList.add('open');
-                icon.style.transform = 'rotate(45deg)';
-            }
+            // Depois de adicionar, ativa o comportamento dos botões
+            setupAccordion();
         });
-    });
+
+    function setupAccordion() {
+        const accordions = document.querySelectorAll('.accordion-button');
+
+        accordions.forEach(clickedAccordion => {
+            clickedAccordion.addEventListener('click', function () {
+                const panel = this.nextElementSibling;
+                const icon = this.querySelector('.icon');
+                const isAlreadyActive = this.classList.contains('active');
+
+                accordions.forEach(otherAccordion => {
+                    if (otherAccordion !== this) {
+                        otherAccordion.classList.remove('active');
+                        otherAccordion.nextElementSibling.style.maxHeight = null;
+                        otherAccordion.nextElementSibling.classList.remove('open');
+                        otherAccordion.querySelector('.icon').style.transform = 'rotate(0deg)';
+                    }
+                });
+
+                if (isAlreadyActive) {
+                    this.classList.remove('active');
+                    panel.style.maxHeight = null;
+                    panel.classList.remove('open');
+                    icon.style.transform = 'rotate(0deg)';
+                } else {
+                    this.classList.add('active');
+                    panel.style.maxHeight = panel.scrollHeight + "px";
+                    panel.classList.add('open');
+                    icon.style.transform = 'rotate(45deg)';
+                }
+            });
+        });
+    }
 });
