@@ -40,6 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const icon = this.querySelector('.icon');
                 const isAlreadyActive = this.classList.contains('active');
 
+                // Fecha todas as outras
                 accordions.forEach(otherAccordion => {
                     if (otherAccordion !== this) {
                         otherAccordion.classList.remove('active');
@@ -59,6 +60,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     panel.style.maxHeight = panel.scrollHeight + "px";
                     panel.classList.add('open');
                     icon.style.transform = 'rotate(45deg)';
+
+                    // Aguarda o painel expandir antes de rolar
+                    setTimeout(() => {
+                        const yOffset = 0; // espaço do topo
+                        const y = this.getBoundingClientRect().top + window.scrollY + yOffset;
+
+                        window.scrollTo({
+                            top: y,
+                            behavior: 'smooth'
+                        });
+                    }, 350); // tempo suficiente para expandir
                 }
             });
         });
